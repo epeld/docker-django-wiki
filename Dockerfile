@@ -1,24 +1,16 @@
-FROM debian:wheezy
-MAINTAINER Carlo Mandelli "camandel@gmail.com"
+FROM camandel/django-wiki
+MAINTAINER Erik Peldan<fullname@gmail.com>
 
-ENV DEBIAN_FRONTEND noninteractive
+RUN rm /testproject/testproject/settings.py
+RUN rm /testproject/testproject/settings.pyc
 
-RUN apt-get update \
-    && apt-get install -y --force-yes --no-install-recommends \
-	python \
-	python-pip \
-	python-dev \
-        python-imaging \
-	git \
-	gcc \
-	ca-certificates \
-    && apt-get autoclean \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
+ADD testproject/testproject/settings.py /testproject/testproject/settings.py
+ADD data /data/
 
-RUN pip install Pillow Django==1.6.8 git+https://github.com/benjaoming/django-wiki.git
+VOLUME /data/
 
-ADD testproject /testproject/
+RUN rm /testproject/db.sqlite3
+RUN ln -s /data/db.sqlite3 /testproject/db.sqlite3
 
 EXPOSE 8000
 
